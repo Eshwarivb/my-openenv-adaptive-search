@@ -1,7 +1,19 @@
+---
+title: Adaptive Search Environment
+emoji: 🤖
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_file: inference.py
+pinned: false
+---
+
 # Adaptive Search Environment (OpenEnv)
 
 ## Overview
-This project implements a reinforcement learning environment where an agent iteratively searches for a target value using feedback signals.
+A reinforcement learning environment that tests how efficiently agents can find a target value within a given range using directional feedback ("low", "high", "correct").
+
+This environment models iterative search optimization problems such as parameter tuning, diagnostic testing, and decision refinement under uncertainty.
 
 ## Tasks
 - Task 1: Range 1–10
