@@ -14,12 +14,17 @@ def home():
 def reset():
     global env
     env = GuessEnv(1, 100)
-    obs = env.reset()
-    return {"observation": obs}
+    env.reset()
+    return {"observation": "start"}   
 
 
 @app.post("/step")
 def step(action: int):
     global env
     result = env.step(action)
-    return result
+
+    return {
+        "observation": result["observation"],
+        "reward": float(result.get("reward", 0.0)),
+        "done": result["done"]
+    }
