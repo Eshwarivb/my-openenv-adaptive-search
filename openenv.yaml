@@ -1,0 +1,11 @@
+name: guessing_env
+
+tasks:
+  - id: task_1
+    range: [1, 10]
+
+  - id: task_2
+    range: [1, 50]
+
+  - id: task_3
+    range: [1, 100]
