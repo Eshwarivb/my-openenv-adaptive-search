@@ -2,27 +2,39 @@ from env import GuessEnv
 import random
 import json
 import math
+import os
+from openai import OpenAI
 
+# 🔹 Environment variables (required)
+API_BASE_URL = os.getenv("API_BASE_URL", "https://api.openai.com/v1")
+MODEL_NAME = os.getenv("MODEL_NAME", "gpt-4o-mini")
+HF_TOKEN = os.getenv("HF_TOKEN")
+if HF_TOKEN:
+    client = OpenAI(
+        base_url=API_BASE_URL,
+        api_key=HF_TOKEN
+    )
+else:
+    client = None  # fallback if no token
 random.seed(42)
 
-# 🔹 Random Agent (baseline)
+# Random Agent (baseline)
 def random_agent(env):
     env.reset()
     steps = 0
 
-    for _ in range(50):  # safety limit
+    for _ in range(50):
         guess = random.randint(env.low, env.high)
         result = env.step(guess)
-
         steps += 1
 
         if result["done"]:
             return steps
 
-    return steps  # fallback
+    return steps
 
 
-# 🔹 Smart Agent (explore + binary search)
+# Smart Agent (explore + binary search)
 def smart_agent(env):
     env.reset()
     low = env.low
@@ -43,8 +55,8 @@ def smart_agent(env):
         else:
             high = guess - 1
 
-    # Exploitation phase (binary search)
-    for _ in range(50):  # safety loop
+    # Exploitation phase
+    for _ in range(50):
         guess = (low + high) // 2
         result = env.step(guess)
         steps += 1
@@ -57,10 +69,10 @@ def smart_agent(env):
         else:
             high = guess - 1
 
-    return steps  # fallback
+    return steps
 
 
-# 🔹 Improved scoring (efficiency-based)
+# Scoring
 def compute_score(steps, low, high):
     optimal_steps = max(1, int(math.log2(high - low + 1)))
     efficiency = optimal_steps / steps
@@ -92,14 +104,13 @@ def run_task(low, high):
 
 
 def run_task_avg(low, high, runs=3):
-    """Run task multiple times and average results for stability"""
     results = [run_task(low, high) for _ in range(runs)]
-    
+
     avg_random_steps = round(sum(r["random_agent"]["steps"] for r in results) / runs, 2)
     avg_random_score = round(sum(r["random_agent"]["score"] for r in results) / runs, 2)
     avg_smart_steps = round(sum(r["smart_agent"]["steps"] for r in results) / runs, 2)
     avg_smart_score = round(sum(r["smart_agent"]["score"] for r in results) / runs, 2)
-    
+
     return {
         "random_agent": {
             "steps": avg_random_steps,
@@ -122,4 +133,8 @@ if __name__ == "__main__":
         "task_3": run_task_avg(1, 100, runs=3),
     }
 
+    #  REQUIRED OUTPUT FORMAT
+    print("START")
+    print("STEP: Running evaluation across tasks")
     print(json.dumps(results, indent=2))
+    print("END")
