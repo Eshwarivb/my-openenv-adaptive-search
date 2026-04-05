@@ -1,0 +1,11 @@
+[project]
+name = "openenv-app"
+version = "0.1.0"
+description = "OpenEnv submission"
+dependencies = [
+    "openai"
+]
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
