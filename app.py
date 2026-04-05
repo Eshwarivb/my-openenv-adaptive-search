@@ -5,6 +5,11 @@ app = FastAPI()
 
 env = None
 
+@app.get("/")
+def home():
+    return {"message": "OpenEnv API running"}
+
+
 @app.post("/reset")
 def reset():
     global env
